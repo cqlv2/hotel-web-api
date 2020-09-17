@@ -3,20 +3,25 @@ package dev.hotel.service;
 import java.util.Optional;
 import java.util.UUID;
 
-import dev.hotel.entite.Chambre;
-import dev.hotel.repository.ChambreRepository;
+import org.springframework.stereotype.Service;
 
+import dev.hotel.entite.Chambre;
+import dev.hotel.web.chambre.ChambreRepository;
+
+@Service
 public class ChambreService {
 
-	private ChambreRepository chambreRepository;
+	private ChambreRepository cRep;
 
-	public ChambreService(ChambreRepository chambreRepository) {
-		super();
-		this.chambreRepository = chambreRepository;
+	/**
+	 * @param cRep
+	 */
+	public ChambreService(ChambreRepository cRep) {
+		this.cRep = cRep;
 	}
 
 	public Optional<Chambre> recupererChambre(UUID uuid) {
-		return chambreRepository.findById(uuid);
+		return cRep.findById(uuid);
 	}
 
 }

@@ -13,18 +13,30 @@ public class CreerClientRequestDto {
 	@Size(min = 3)
 	private String prenoms;
 
+	/**
+	 * @return the nom
+	 */
 	public String getNom() {
 		return nom;
 	}
 
+	/**
+	 * @param nom the nom to set
+	 */
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
 
+	/**
+	 * @return the prenoms
+	 */
 	public String getPrenoms() {
 		return prenoms;
 	}
 
+	/**
+	 * @param prenoms the prenoms to set
+	 */
 	public void setPrenoms(String prenoms) {
 		this.prenoms = prenoms;
 	}

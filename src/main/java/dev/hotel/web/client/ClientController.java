@@ -9,11 +9,11 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,45 +21,44 @@ import dev.hotel.entite.Client;
 import dev.hotel.service.ClientService;
 
 @RestController
+@RequestMapping("clients")
 public class ClientController {
 
-	private ClientService clientService;
+	private ClientService cServ;
 
-	public ClientController(ClientService clientService) {
-		super();
-		this.clientService = clientService;
+	public ClientController(ClientService cServ) {
+		this.cServ = cServ;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, path = "clients")
-	public List<Client> listClient(@RequestParam int start, @RequestParam int size) {
-		return clientService.listerClients(start, size);
+	@GetMapping
+	public List<Client> ListClients(@RequestParam Integer start, @RequestParam Integer size) {
+		return cServ.listerClients(start, size);
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, path = "clients/{uuid}")
-	public ResponseEntity<?> recupererClient(@PathVariable UUID uuid) {
-		Optional<Client> optClient = clientService.recupererClient(uuid);
+	@GetMapping("{uuid}")
+	public ResponseEntity<?> clientsUUID(@PathVariable UUID uuid) {
 
-		if (optClient.isPresent()) {
-			return ResponseEntity.status(HttpStatus.OK).body(optClient);
+		Optional<Client> c = cServ.recupererClient(uuid);
+
+		if (c.isPresent()) {
+			return ResponseEntity.status(HttpStatus.OK).header("message", "Client Trouvé").body(c.get());
+
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Veuillez entrer un autre identifiant client");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("L’UUID ne correspond pas à un uuid de client en base de données !");
 		}
-
 	}
 
-	@PostMapping(path = "clients", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> postClient(@RequestBody @Valid CreerClientRequestDto client,
-			BindingResult resultatValidation) {
+	@PostMapping
+	public ResponseEntity<?> newClient(@Valid @RequestBody CreerClientRequestDto client, BindingResult resValid) {
 
-		if (resultatValidation.hasErrors()) {
-			return ResponseEntity.badRequest()
-					.body("Erreur : la donnée n'a pas pu être rentrée en base à cause d'un nom/prénom trop court");
+		if (!resValid.hasErrors()) {
+			Client clientServ = cServ.creerClient(client.getNom(), client.getPrenoms());
+			CreerClientReponseDto clientRep = new CreerClientReponseDto(clientServ);
+			return ResponseEntity.ok(clientRep);
+		} else {
+			return ResponseEntity.badRequest().body("Le nom et le prénom doivent avoir plus de deux caractères !");
 		}
-
-		return ResponseEntity
-				.ok(new CreerClientResponseDto(clientService.creerNouveauClient(client.getNom(), client.getPrenoms())));
-
 	}
-
 }
