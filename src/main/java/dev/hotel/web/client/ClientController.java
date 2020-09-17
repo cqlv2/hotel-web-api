@@ -49,6 +49,17 @@ public class ClientController {
 					.body("L’UUID ne correspond pas à un uuid de client en base de données !");
 		}
 	}
+	
+	
+	@GetMapping("search")
+	public ResponseEntity<?> clientsnom(@RequestParam String nom) {
+
+		List<Client> clients= cServ.findByName(nom);
+		return ResponseEntity.status(HttpStatus.OK).header("message", "Client Trouvé").body(clients);
+	}
+	
+	
+	
 
 	@PostMapping
 	public ResponseEntity<?> newClient(@Valid @RequestBody CreerClientRequestDto client, BindingResult resValid) {

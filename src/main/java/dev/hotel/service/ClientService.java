@@ -30,11 +30,17 @@ public class ClientService {
 		return cr.findById(uuid);
 	}
 
+	public List<Client> findByName(String nom) {
+		return cr.findAllBynom(nom);
+	}
+	
 	@Transactional
 	public Client creerClient(String nom, String prenoms) {
 
 		return cr.save(new Client(nom, prenoms));
 
 	}
+
+
 
 }
