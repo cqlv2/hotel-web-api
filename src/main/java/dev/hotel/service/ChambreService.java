@@ -1,5 +1,6 @@
 package dev.hotel.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +21,11 @@ public class ChambreService {
 		this.cRep = cRep;
 	}
 
+	
+	public List<Chambre> readAll(){
+		return cRep.findAll();
+	}
+	
 	public Optional<Chambre> recupererChambre(UUID uuid) {
 		return cRep.findById(uuid);
 	}
